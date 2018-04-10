@@ -38,7 +38,6 @@ saveNewOffering = saveNew "offerings/" OfferingID
 dbURL :: Text
 dbURL = "http://beakr-mu.firebaseio.com/"
 
-- |
 saveNew :: (ToJSON a)
         => Text          -- ^ endpoint ending with a forward slash
         -> (Text -> b)    -- ^ wrapper function for resulting ID
