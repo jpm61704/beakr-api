@@ -2,7 +2,6 @@
 {-# LANGUAGE DeriveGeneric #-}
 module DB where
 
-
 import Network.Wreq
 import Model.User
 import Model.Student
