@@ -22,7 +22,7 @@ newtype UserID = UserID Text
 newtype OfferingID = OfferingID Text
 
 saveNewUser :: User -> S.ActionM (UserID)
-saveNewUser user = saveNew "users/" UserID user
+saveNewUser user = saveNew "users" UserID user
 
 getUser :: UserID -> S.ActionM (Maybe User)
 getUser (UserID id) = getFromID "users/" id
@@ -31,12 +31,12 @@ getOffering :: OfferingID -> S.ActionM (Maybe Offering)
 getOffering (OfferingID id) = getFromID "offerings/" id
 
 saveNewOffering :: Offering -> S.ActionM (OfferingID)
-saveNewOffering = saveNew "offerings/" OfferingID
+saveNewOffering = saveNew "offerings" OfferingID
 
 -- * Generalized DB Functions
 
 dbURL :: Text
-dbURL = "http://beakr-mu.firebaseio.com/"
+dbURL = "https://beakr-mu.firebaseio.com/"
 
 saveNew :: (ToJSON a)
         => Text          -- ^ endpoint ending with a forward slash

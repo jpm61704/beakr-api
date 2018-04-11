@@ -28,6 +28,7 @@ dependencies:
 - lens
 - bytestring
 - mtl
+- time
 
 library:
   source-dirs: src

@@ -4,6 +4,7 @@ module Server where
 
 import Model.User
 import Model.Student
+import Model.Offering
 import Web.Scotty
 import Web.Scotty.Internal.Types
 import Data.Text
@@ -25,6 +26,11 @@ server = scotty 3000 $ do
                              return ()
                            Nothing -> return ()
                          json ()
+    post "/offering" $ do
+      b <- body
+      let Just off = J.decode b :: Maybe Offering
+      id <- saveNewOffering off
+      json ()
 
 
 
