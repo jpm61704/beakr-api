@@ -34,6 +34,7 @@ server port = scotty port $ do
       id <- saveNewOffering off
       json ()
     get "/offerings" (getCategory "offerings" >>= json)
+    get "/easter" $ json ("This is an easter egg, hehe" :: Text)
 
 
 -- fix the explicit pattern match on just here
