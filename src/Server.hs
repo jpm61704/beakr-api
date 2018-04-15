@@ -13,8 +13,10 @@ import qualified Data.Aeson as J
 import DB
 import GHC.Generics
 
-server :: IO ()
-server = scotty 3000 $ do
+type Port = Int
+
+server :: Port -> IO ()
+server port = scotty port $ do
     get "/user/:id" $ do
       id <- param "id" :: ActionM TL.Text
       u <- getUser (UserID id)
