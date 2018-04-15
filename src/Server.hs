@@ -31,7 +31,7 @@ server = scotty 3000 $ do
       let Just off = J.decode b :: Maybe Offering
       id <- saveNewOffering off
       json ()
-
+    get "/offerings" (getCategory "offerings" >>= json)
 
 
 -- fix the explicit pattern match on just here

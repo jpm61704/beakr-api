@@ -34,3 +34,11 @@ data OfferingLength = OfferingLength { startDate :: Day
 instance ToJSON OfferingLength where
 
 instance FromJSON OfferingLength where
+
+
+-- need to parse lists of objects from the DB with as a list of key value pairs as opposed to an object
+-- They are of form {
+--      key : {},
+--      key : {},,
+--      etc...
+-- }
