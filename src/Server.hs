@@ -18,7 +18,7 @@ type Port = Int
 server :: Port -> IO ()
 server port = scotty port $ do
     get "/user/:id" $ do
-      id <- param "id" :: ActionM TL.Text
+      id <- param "id" :: ActionM Text
       u <- getUser (UserID id)
       json u
     post "/student" $ do s' <- parseNewStudent
@@ -50,4 +50,4 @@ data NewStudentData = NewStudentData { name :: Name,
                                        major :: Major
                                      } deriving (Show, Generic)
 
-instance J.FromJSON NewStudentData where 
+instance J.FromJSON NewStudentData where

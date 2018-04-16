@@ -11,7 +11,7 @@ import Data.Aeson.Encoding
 import Data.Maybe
 import qualified Control.Lens as L
 import Data.String
-import Data.Text.Lazy
+import Data.Text
 import qualified Data.ByteString.Lazy as B
 import qualified Web.Scotty as S
 import Data.Semigroup
@@ -20,10 +20,9 @@ import Data.Text.Lazy.Encoding
 import GHC.Generics
 import Data.HashMap.Strict
 
-newtype UserID = UserID Text
 newtype OfferingID = OfferingID Text
 
-saveNewUser :: User -> S.ActionM (UserID)
+saveNewUser :: User -> S.ActionM (Maybe UserID)
 saveNewUser user = saveNew "users" UserID user
 
 getUser :: UserID -> S.ActionM (Maybe User)
@@ -32,8 +31,9 @@ getUser (UserID id) = getFromID "users/" id
 getOffering :: OfferingID -> S.ActionM (Maybe Offering)
 getOffering (OfferingID id) = getFromID "offerings/" id
 
-saveNewOffering :: Offering -> S.ActionM (OfferingID)
+saveNewOffering :: Offering -> S.ActionM (Maybe OfferingID)
 saveNewOffering = saveNew "offerings" OfferingID
+
 
 
 -- * Generalized DB Functions
@@ -45,11 +45,11 @@ saveNew :: (ToJSON a)
         => Text          -- ^ endpoint ending with a forward slash
         -> (Text -> b)    -- ^ wrapper fun ction forTAGS
         -> a             -- ^ the thing to be saved
-        -> S.ActionM (b) -- ^ the id after saving
+        -> S.ActionM (Maybe b) -- ^ the id after saving
 saveNew endpoint f x = do
   let url = unpack (mconcat [dbURL, endpoint, ".json"])
   y <- lift $ post url (encode x)
-  return $ f $ decodeUtf8 (y L.^. responseBody)
+  return $ fmap f $ decode (y L.^. responseBody)
 
 getFromID :: (FromJSON a) => Text -> Text -> S.ActionM (Maybe a)
 getFromID endpoint id = do

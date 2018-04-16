@@ -10,6 +10,17 @@ import           GHC.Generics
 import Model.Student
 import Model.Faculty
 
+
+newtype UserID = UserID Text deriving Generic
+
+instance ToJSON UserID where
+
+instance FromJSON UserID where
+
+  
+instance Show UserID where
+  show (UserID id) = unpack id
+
 -- * User datatype
 
 data User = User { name  :: Name
