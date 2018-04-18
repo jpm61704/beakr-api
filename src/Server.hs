@@ -1,26 +1,25 @@
-{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 module Server where
 
-import Model.User
-import Model.Student
-import Model.Offering
-import Web.Scotty
-import Web.Scotty.Internal.Types
-import Data.Text
-import qualified Data.Text.Internal.Lazy as TL
-import qualified Data.Aeson as J
-import DB
-import GHC.Generics
+import qualified Data.Aeson                as J
+import           Data.Text
+import qualified Data.Text.Internal.Lazy   as TL
+import           DB
+import           GHC.Generics
+import           Model.Message
+import           Model.Offering
+import           Model.Student
+import           Model.User
+import           Web.Scotty
+import           Web.Scotty.Internal.Types
 
 type Port = Int
 
 server :: Port -> IO ()
 server port = scotty port $ do
-    get "/user/:id" $ do
-      id <- param "id" :: ActionM Text
-      u <- getUser (UserID id)
-      json u
+    getID "/user/:id" UserID getUser
+    getAll "/users" "users"
     post "/student" $ do s' <- parseNewStudent
                          case s' of
                            Just u -> do
@@ -28,26 +27,41 @@ server port = scotty port $ do
                              return ()
                            Nothing -> return ()
                          json ()
-    post "/offering" $ do
-      b <- body
-      let Just off = J.decode b :: Maybe Offering
-      id <- saveNewOffering off
-      json ()
-    get "/offerings" (getCategory "offerings" >>= json)
-    get "/easter" $ json ("This is an easter egg, hehe" :: Text)
+    postNew "/offering" saveNewOffering 
+    getAll "/offerings" "offerings"
+    postNew "/message" saveNewMessage 
+    getID "/message/:id" MessageID getMessage
+    getAll "/messages" "messages"
+
+postNew :: (J.FromJSON a) => RoutePattern -> (a -> ActionM (Maybe b)) -> ScottyM ()
+postNew route saveToDB = post route $ do
+  b <- body 
+  let Just x = J.decode b :: (J.FromJSON a) => Maybe a
+  id <- saveToDB x
+  json ()
+
+getAll :: RoutePattern -> Text -> ScottyM ()
+getAll route cat = get route (getCategory cat >>= json)
+
+
+getID :: (J.ToJSON b, J.FromJSON b) => RoutePattern -> (Text -> a) -> (a -> ActionM (Maybe b)) -> ScottyM ()
+getID ourEndpoint idwrap getFromDB = get ourEndpoint $ do
+  id <- param "id" :: ActionM Text
+  x  <- getFromDB (idwrap id)
+  json x
 
 
 -- fix the explicit pattern match on just here
 parseNewStudent :: ActionM (Maybe (User))
-parseNewStudent = do b <- body
+parseNewStudent = do b <- body 
                      let Just (NewStudentData n email s m) = (J.decode b :: Maybe NewStudentData)
                          Just email' = parseEmail email
                      return $ Just (User n email' (Just (Student s m)) Nothing)
 
-data NewStudentData = NewStudentData { name :: Name,
-                                       email :: Text,
+data NewStudentData = NewStudentData { name     :: Name,
+                                       email    :: Text,
                                        standing :: Standing,
-                                       major :: Major
+                                       major    :: Major
                                      } deriving (Show, Generic)
 
 instance J.FromJSON NewStudentData where

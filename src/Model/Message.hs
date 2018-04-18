@@ -13,9 +13,12 @@ data Message = Message { from      :: UserID
                        , to        :: UserID
                        , subject   :: Text
                        , date_sent :: UTCTime
-                       , body      :: Text
+                       , msg_body  :: Text
                        } deriving (Show, Generic)
 
 instance ToJSON Message where
 
 instance FromJSON Message where
+
+
+data MessageID = MessageID Text

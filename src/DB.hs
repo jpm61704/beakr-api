@@ -1,24 +1,25 @@
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DeriveGeneric #-}
 module DB where
 
-import Network.Wreq
-import Model.User
-import Model.Student
-import Model.Offering
-import Data.Aeson
-import Data.Aeson.Encoding
-import Data.Maybe
-import qualified Control.Lens as L
-import Data.String
-import Data.Text
-import qualified Data.ByteString.Lazy as B
-import qualified Web.Scotty as S
-import Data.Semigroup
-import Control.Monad.Trans
-import Data.Text.Lazy.Encoding
-import GHC.Generics
-import Data.HashMap.Strict
+import qualified Control.Lens            as L
+import           Control.Monad.Trans
+import           Data.Aeson
+import           Data.Aeson.Encoding
+import qualified Data.ByteString.Lazy    as B
+import           Data.HashMap.Strict
+import           Data.Maybe
+import           Data.Semigroup
+import           Data.String
+import           Data.Text
+import           Data.Text.Lazy.Encoding
+import           GHC.Generics
+import           Model.Message
+import           Model.Offering
+import           Model.Student
+import           Model.User
+import           Network.Wreq
+import qualified Web.Scotty              as S
 
 newtype OfferingID = OfferingID Text
 
@@ -34,7 +35,12 @@ getOffering (OfferingID id) = getFromID "offerings/" id
 saveNewOffering :: Offering -> S.ActionM (Maybe OfferingID)
 saveNewOffering = saveNew "offerings" OfferingID
 
+getMessage :: MessageID -> S.ActionM (Maybe Message)
+getMessage (MessageID id) = getFromID "messages/" id
 
+
+saveNewMessage :: Message -> S.ActionM (Maybe MessageID)
+saveNewMessage = saveNew "messages" MessageID
 
 -- * Generalized DB Functions
 
