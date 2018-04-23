@@ -36,6 +36,12 @@ instance ToJSON OfferingLength where
 instance FromJSON OfferingLength where
 
 
+
+newtype OfferingID = OfferingID Text deriving (Show, Generic)
+
+instance ToJSON OfferingID where
+
+instance FromJSON OfferingID where
 -- need to parse lists of objects from the DB with as a list of key value pairs as opposed to an object
 -- They are of form {
 --      key : {},

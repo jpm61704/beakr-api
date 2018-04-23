@@ -21,4 +21,10 @@ instance ToJSON Message where
 instance FromJSON Message where
 
 
-data MessageID = MessageID Text
+data MessageID = MessageID Text deriving (Generic, Show)
+
+instance ToJSON MessageID where
+
+instance FromJSON MessageID where 
+
+

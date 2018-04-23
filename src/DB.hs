@@ -21,7 +21,6 @@ import           Model.User
 import           Network.Wreq
 import qualified Web.Scotty              as S
 
-newtype OfferingID = OfferingID Text
 
 saveNewUser :: User -> S.ActionM (Maybe UserID)
 saveNewUser user = saveNew "users" UserID user
